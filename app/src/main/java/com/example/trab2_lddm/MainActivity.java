@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerInterface
     private Node raiz = new Node();
     private Node pai = raiz;
     //private List<Node> nodes = new ArrayList<>();
-    private List<Node> pais = new ArrayList<>();
+    private List<Node> pais = null; //= new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +47,21 @@ public class MainActivity extends AppCompatActivity implements RecyclerInterface
     }
 
     public void btnRet(View V) {
-        novoAdapter = new MeuAdapter(this,pais,this);
-        meuRecyclerView.setAdapter(novoAdapter);
-        pai.setChildren(pais);
-        pais = pai.getFather().getChildren();
-        pai = pai.getFather();
-        novoAdapter.notifyDataSetChanged();
-        Toast.makeText(this, "kakakakakakak lolololo", Toast.LENGTH_SHORT).show();
+        if(pais == null) {
+            Toast.makeText(this, "Ou pera lá, da pra voltar mais não, rsrsrrs.", Toast.LENGTH_SHORT).show();
+        } else {
+            pai = pai.getFather();
+            if (pai != raiz) {
+                pais = pai.getFather().getChildren();
+            } else {
+                pais = null;
+            }
+            novoAdapter = new MeuAdapter(this, pai.getChildren(), this);
+            meuRecyclerView.setAdapter(novoAdapter);
+            adapter.notifyDataSetChanged();
+            if (novoAdapter != null) novoAdapter.notifyDataSetChanged();
+            Toast.makeText(this, "kakakakakakak lolololo", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void btnClose(View V) {
@@ -78,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerInterface
             novoAdapter = new MeuAdapter(this,node.getChildren(),this);
             meuRecyclerView.setAdapter(novoAdapter);
             pais = pai.getChildren();
-            pai.setChildren(node.getChildren());
             pai = node;
             novoAdapter.notifyDataSetChanged();
         }
@@ -99,14 +106,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerInterface
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // create node
-                Node node;
-                if(pai.getFather()==null)
-                    node= new Node(raiz,input.getText().toString(), pai.getChildren().size());
-                else
-                    node= new Node(pai,input.getText().toString(), pai.getChildren().size());
-                List<Node> a = pai.getChildren();
-                a.add(node);
-                pai.setChildren(a);
+                Node node = new Node(pai,input.getText().toString(), pai.getChildren().size());
+                pai.getChildren().add(node);
                 adapter.notifyDataSetChanged();
                 if(novoAdapter != null) novoAdapter.notifyDataSetChanged();
             }
