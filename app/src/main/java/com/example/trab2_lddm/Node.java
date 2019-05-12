@@ -24,6 +24,7 @@ public class Node {
     public Node(){
         this.father = null;
         this.content = "raiz";
+        setCod(-1);
     }
 
     /**
@@ -83,6 +84,7 @@ public class Node {
     public String getNome() {
         String nome = "";
         if(father != null){
+            if (father.getCod() != -1)
             nome = father.getNome() + ".";
         }
         nome = nome + cod;
